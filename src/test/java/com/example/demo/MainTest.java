@@ -26,39 +26,33 @@ public class MainTest {
 
     @Test
     public void sift(){
+        List<PersonSource> left = new ArrayList<>();
         PersonSource a = new PersonSource(1, "a");
         PersonSource b = new PersonSource(2, "b");
         PersonSource c = new PersonSource(3, "c");
-        List<PersonSource> left = new ArrayList<>();
-        left.add(a);
+        PersonSource g = new PersonSource(7, "g");
+        PersonSource k = new PersonSource(8, "k");
         left.add(b);
         left.add(c);
+        left.add(a);
+        left.add(g);
+        left.add(k);
 
-        PersonDestination a1 = new PersonDestination(1, "a");
-        PersonDestination b1 = new PersonDestination(7, "b");
-        PersonDestination c1 = new PersonDestination(3, "c");
-        PersonDestination e = new PersonDestination(4, "e");
-        PersonDestination f = new PersonDestination(5, "f");
         List<PersonDestination> right = new ArrayList<>();
+        PersonDestination a1 = new PersonDestination(1, "a");
+        PersonDestination b1 = new PersonDestination(2, "b");
+        PersonDestination c1 = new PersonDestination(3, "c");
         right.add(a1);
         right.add(b1);
         right.add(c1);
+        PersonDestination e = new PersonDestination(4, "e");
+        PersonDestination f = new PersonDestination(5, "f");
         right.add(e);
         right.add(f);
 
         SiftUtil.Processor<PersonSource, PersonDestination> processor = SiftUtil.buildProcess(left, right);
         ResultMap<PersonSource, PersonDestination> resultMap = processor.process((l, r) -> l.getId().equals(r.getId()));
 
-        ResultCell<PersonSource, PersonDestination> difference = resultMap.getDifference();
-        ResultCell<PersonSource, PersonDestination> intersection = resultMap.getIntersection();
-        Collection<PersonSource> left1 = difference.getLeft();
-        Collection<PersonDestination> right1 = difference.getRight();
-        System.out.println(left1);
-        System.out.println(right1);
-
-        Collection<PersonSource> left2 = intersection.getLeft();
-        Collection<PersonDestination> right2 = intersection.getRight();
-        System.out.println(left2);
-        System.out.println(right2);
+        System.out.println(1);
     }
 }

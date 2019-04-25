@@ -14,8 +14,8 @@ public class SiftUtil {
     public static class Processor<L, R> {
         Collection<L> ll;
         Collection<R> rr;
-        LeftOutAction<L> leftOutAction;
-        RightOutAction<R> rightOutAction;
+        LeftOutAction<L, R> leftOutAction;
+        RightOutAction<L, R> rightOutAction;
         IntersectionAction<L, R> intersectionAction;
 
         Processor(Collection<L> ll, Collection<R> rr) {
@@ -23,12 +23,12 @@ public class SiftUtil {
             this.rr = rr;
         }
 
-        public Processor<L, R> setLeftOutAction(LeftOutAction<L> leftOutAction) {
+        public Processor<L, R> setLeftOutAction(LeftOutAction<L, R> leftOutAction) {
             this.leftOutAction = leftOutAction;
             return this;
         }
 
-        public Processor<L, R> setRightOutAction(RightOutAction<R> rightOutAction) {
+        public Processor<L, R> setRightOutAction(RightOutAction<L, R> rightOutAction) {
             this.rightOutAction = rightOutAction;
             return this;
         }
@@ -40,41 +40,49 @@ public class SiftUtil {
 
         public ResultMap<L, R> process(Comparator<L, R> predicate) {
             List<R> rrTemp = new ArrayList<>(rr);
-            ResultCell<L, R> intersection = new ResultCell<>(new ArrayList<>(), new ArrayList<>());
-            ResultCell<L, R> difference = new ResultCell<>(new ArrayList<>(), new ArrayList<>());
-            for (L l : ll) {
+            List<ResultCell<L, R>> collectResult = new ArrayList<>();
+            List<ResultCell<L, R>> actionResult = instanceActionResult();
+            out:for (L l : ll) {
                 Iterator<R> iterator = rrTemp.iterator();
-                int j = 0;
-                for (; j < rrTemp.size(); ) {
+                while (iterator.hasNext()) {
                     R r = iterator.next();
                     // add intersection
                     if (predicate.equal(l, r)) {
                         if (intersectionAction != null) {
-                            intersectionAction.execute(l, r);
+                            mergeActionResult(actionResult, intersectionAction.execute(l, r));
                         }
-                        intersection.getLeft().add(l);
-                        intersection.getRight().add(r);
+                        collectResult.add(new ResultCell<>(l, r, CellType.INTERSECTION));
                         iterator.remove();
-                        break;
+                        continue out;
                     }
-                    j++;
                 }
                 // add left out
-                if (j == rrTemp.size()) {
-                    if (leftOutAction != null) {
-                        leftOutAction.execute(l);
-                    }
-                    difference.getLeft().add(l);
+                if (leftOutAction != null) {
+                    mergeActionResult(actionResult, leftOutAction.execute(l));
                 }
+                collectResult.add(new ResultCell<>(l, null, CellType.LEFT));
             }
-            //add right out
-            if (rightOutAction != null) {
-                rrTemp.forEach(r -> {
-                    rightOutAction.execute(r);
-                    difference.getRight().add(r);
-                });
+            // add right out
+            rrTemp.forEach(r -> {
+                if (rightOutAction != null) {
+                    mergeActionResult(actionResult, rightOutAction.execute(r));
+                }
+                collectResult.add(new ResultCell<>(null, r, CellType.RIGHT));
+            });
+            return new ResultMap<>(collectResult, actionResult);
+        }
+
+        private List<ResultCell<L, R>> instanceActionResult() {
+            if (intersectionAction != null || leftOutAction != null || rightOutAction != null) {
+                return new ArrayList<>();
             }
-            return new ResultMap<>(intersection, difference);
+            return null;
+        }
+
+        private void mergeActionResult(List<ResultCell<L, R>> dest, ResultCell<L, R> sour) {
+            if (sour != null) {
+                dest.add(sour);
+            }
         }
 
         @FunctionalInterface
@@ -83,18 +91,18 @@ public class SiftUtil {
         }
 
         @FunctionalInterface
-        public interface LeftOutAction<L> {
-            boolean execute(L l);
+        public interface LeftOutAction<L, R> {
+            ResultCell<L, R> execute(L l);
         }
 
         @FunctionalInterface
-        public interface RightOutAction<R> {
-            boolean execute(R r);
+        public interface RightOutAction<L, R> {
+            ResultCell<L, R> execute(R r);
         }
 
         @FunctionalInterface
         public interface IntersectionAction<L, R> {
-            boolean execute(L l, R r);
+            ResultCell<L, R> execute(L l, R r);
         }
     }
 }

@@ -1,21 +1,25 @@
 package com.example.demo.util.sift;
 
-import java.util.Collection;
-
 public class ResultCell<L, R> {
-    private Collection<L> left;
-    private Collection<R> right;
+    private L l;
+    private R r;
+    private CellType cellType;
 
-    ResultCell(Collection<L> ll, Collection<R> rr) {
-        this.left = ll;
-        this.right = rr;
+    public ResultCell(L l, R r, CellType cellType) {
+        this.l = l;
+        this.r = r;
+        this.cellType = cellType;
     }
 
-    public Collection<L> getLeft() {
-        return left;
+    public L getL() {
+        return l;
     }
 
-    public Collection<R> getRight() {
-        return right;
+    public R getR() {
+        return r;
+    }
+
+    CellType getCellType() {
+        return cellType;
     }
 }
