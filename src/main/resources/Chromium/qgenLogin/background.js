@@ -1,38 +1,22 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-'use strict';
-
-// Simple extension to remove 'Cookie' request header and 'Set-Cookie' response
-// header.
-
-function removeHeader(headers, name) {
-    for (var i = 0; i < headers.length; i++) {
-        if (headers[i].name.toLowerCase() == name) {
-            console.log('Removing "' + name + '" header.');
-            headers.splice(i, 1);
-            break;
+function removeCookies(url) {
+    chrome.cookies.getAll({url: url}, function (cookies) {
+        if (cookies && cookies.length > 0) {
+            for (var i = 0; i < cookies.length; i++) {
+                chrome.cookies.remove({url: url, name: cookies[i].name}, function (details) {
+                    // console.log(details.name);
+                })
+            }
         }
-    }
+    })
 }
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function (details) {
-        removeHeader(details.requestHeaders, 'cookie');
+        window.localStorage.clear();
+        removeCookies('https://us-dev-mycis.synnex.org');
         return {requestHeaders: details.requestHeaders};
     },
     // filters
-    {urls: ['https://*/*', 'http://*/*']},
+    {urls: ['https://us-dev-mycis.synnex.org/login-portal/**', 'http://us-dev-mycis.synnex.org/login-portal/**']},
     // extraInfoSpec
-    ['blocking', 'requestHeaders', 'extraHeaders']);
-
-chrome.webRequest.onHeadersReceived.addListener(
-    function (details) {
-        removeHeader(details.responseHeaders, 'set-cookie');
-        return {responseHeaders: details.responseHeaders};
-    },
-    // filters
-    {urls: ['https://*/*', 'http://*/*']},
-    // extraInfoSpec
-    ['blocking', 'responseHeaders', 'extraHeaders']);
+    ['requestHeaders']);
