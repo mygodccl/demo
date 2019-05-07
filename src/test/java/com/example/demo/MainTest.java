@@ -1,31 +1,29 @@
 package com.example.demo;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+
 import com.example.demo.orika.BO.PersonDestination;
 import com.example.demo.orika.entity.PersonSource;
-import com.example.demo.util.sift.ResultCell;
 import com.example.demo.util.sift.ResultMap;
 import com.example.demo.util.sift.SiftUtil;
+
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ScoringClassMapBuilder;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class MainTest {
     MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
     @Test
-    public void simple(){
-        MapperFactory factory = new DefaultMapperFactory.Builder()
-                .classMapBuilderFactory(new ScoringClassMapBuilder.Factory())
-                .build();
+    public void simple() {
+        MapperFactory factory = new DefaultMapperFactory.Builder().classMapBuilderFactory(new ScoringClassMapBuilder.Factory()).build();
     }
 
     @Test
-    public void sift(){
+    public void sift() {
         List<PersonSource> left = new ArrayList<>();
         PersonSource a = new PersonSource(1, "a");
         PersonSource b = new PersonSource(2, "b");
