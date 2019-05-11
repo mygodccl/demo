@@ -1,14 +1,14 @@
 {
   "name": "No Cookies",
-  "description": "Removes 'Cookie' and 'Set-Cookie' headers.",
+  "description": "Removes 'Cookie' and LocalStorage.",
   "version": "1.0",
   "manifest_version": 2,
   "permissions": [
     "cookies",
     "webRequest",
     "webRequestBlocking",
-    "https://*/*",
-    "http://*/*"
+    "https://us-dev-mycis.synnex.org/login-portal/**",
+    "http://us-dev-mycis.synnex.org/login-portal/**"
   ],
   "background": {
     "scripts": [
