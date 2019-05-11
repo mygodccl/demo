@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class PersonSource {
     private Integer id;
     private String name;
-    private Boolean active1;
+    private boolean active1;
     // private Boolean flag;
     // private Boolean reverse;
 }
