@@ -10,7 +10,9 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.junit.Test;
 
 public class MainTest {
-    MapperFactory mapperFactory = new DefaultMapperFactory.Builder().codeGenerationStrategy(new CustomCodeGenerationStrategy()).mapNulls(false).build();
+    MapperFactory mapperFactory = new DefaultMapperFactory.Builder()
+            .codeGenerationStrategy(new CustomCodeGenerationStrategy())
+            .mapNulls(false).build();
 
     @Test
     public void simple() {
@@ -20,9 +22,9 @@ public class MainTest {
                 .register();
 
         BoundMapperFacade<PersonSource, PersonDestination> facade = mapperFactory.getMapperFacade(PersonSource.class, PersonDestination.class);
-        PersonDestination destination = facade.map(new PersonSource(1, "ccl", true));
-        PersonSource personSource = facade.mapReverse(new PersonDestination(2, "dy", null));
+        PersonDestination destination = facade.map(new PersonSource(1, "ccl", false));
+//        PersonSource personSource = facade.mapReverse(new PersonDestination(2, "dy", null));
         System.out.println(destination);
-        System.out.println(personSource);
+//        System.out.println(personSource);
     }
 }
