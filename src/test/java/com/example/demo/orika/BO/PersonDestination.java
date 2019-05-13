@@ -11,6 +11,7 @@ public class PersonDestination {
     private Integer id;
     private String name;
     private String active2;
+    private String col;
     // private Integer flag;
     // private Boolean reverse;
 }

@@ -11,6 +11,7 @@ public class PersonSource {
     private Integer id;
     private String name;
     private Boolean active1;
+    private String[] col;
     // private Boolean flag;
     // private Boolean reverse;
 }
